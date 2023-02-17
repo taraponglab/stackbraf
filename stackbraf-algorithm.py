@@ -10,6 +10,7 @@ from rdkit.Chem import AllChem
 from rdkit import Chem
 from glob import glob
 import os
+import zipfile
 print('   ')
 print('Welcome to StackBRAF model, you can predict the BRAF inhibitory activity of your chemical compound based on the SMILE string')
 print('   ')
@@ -135,6 +136,10 @@ df_predict_xgb.columns=columns_list
 
 
 print(' Task 4: XGB calculation completed')
+
+
+with zipfile.ZipFile("models/models-fp/SVR_reg_KlekotaRoth.zip","r") as zip_ref:
+    zip_ref.extractall("models/models-fp/")
 
 #prediction
 Model = {}
