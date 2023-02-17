@@ -1,2 +1,2 @@
 # stackbraf
-StackBRAF model
+StackBRAF model for predicting BRAF inhibitors
