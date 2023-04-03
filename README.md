@@ -1,5 +1,4 @@
 # StackBRAF: a large-scale stacking ensemble learning for BRAF affinity prediction
-
-#### Nur Fadhilah Syahid a, Natthida Weerapreeyakul b,c, Tarapong Srisongkram *,b,c
+#### Currently submitted in the ACS Omega journal
 #### Corresponding author: 
 #### Tarapong Srisongkram (tarasri@kku.ac.th)
