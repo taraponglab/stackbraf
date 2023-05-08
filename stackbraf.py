@@ -223,6 +223,8 @@ def execute_algorithm(smile,name):
     print('Dr. Tarapong Srisongkram and Nur Fadhilah Syahid')
     print('   ')
 
-    return res
+    result = res.to_json(orient="records")
+
+    return result
 
 #execute_algorithm("CC(C)N1C=C(C(=N1)C2=C(C(=CC(=C2)Cl)NS(=O)(=O)C)F)C3=NC(=NC=C3)NCC(C)NC(=O)OC","encorafenib")
