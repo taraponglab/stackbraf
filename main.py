@@ -1,9 +1,9 @@
 from fastapi import FastAPI
 from pydantic import BaseModel
 from fastapi.middleware.cors import CORSMiddleware
-import stackbraf
+from tasks import stackbraf_model
 
-class Prediction(BaseModel):
+class StackBRAFPredictor(BaseModel):
     name: str
     smiles: str
 
@@ -27,6 +27,14 @@ async def root():
     return {"message": "StackBRAF Model"}
 
 @app.post("/stackbraf/")
-async def model(prediction: Prediction):
-    result = stackbraf.execute_algorithm(prediction.smiles, prediction.name)
-    return result
+async def StackBRAFModel(prediction: StackBRAFPredictor):
+    process = stackbraf_model.delay(prediction.smiles, prediction.name)
+    return {"process_id": process.id}
+
+@app.get("/stackbraf/{process_id}")
+async def StackBRAFResult(process_id: str):
+    result = stackbraf_model.AsyncResult(process_id)
+    if (result.successful()):
+        return {"result": result.get(timeout=1)}
+    else:
+        return {"result": "process not complete"}

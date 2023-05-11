@@ -223,7 +223,7 @@ def execute_algorithm(smile,name):
     print('Dr. Tarapong Srisongkram and Nur Fadhilah Syahid')
     print('   ')
 
-    result = res.to_json(orient="records")
+    result = res.to_json(orient="index")
 
     return result
 
