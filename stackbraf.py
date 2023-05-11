@@ -60,8 +60,8 @@ def execute_algorithm(smile,name):
     print(' Task 2: Fingerprint calculation completed')
 
     #individual compounds
-    outlier = pd.read_csv('ad-analysis/outlier.csv',index_col='LigandID')
-    outlier_smile =list(outlier['name'])
+    nonoutlier = pd.read_csv('ad-analysis/nonoutlier.csv',index_col='LigandID')
+    outlier_smile =list(nonoutlier['name'])
     similarity = []
     similarity_max = []
     query = Chem.MolFromSmiles(smile)
@@ -72,10 +72,10 @@ def execute_algorithm(smile,name):
         s = DataStructs.TanimotoSimilarity(fp1,fp2)
         similarity.append(s)
     similarity_max.append(max(similarity))
-    similarity_score = pd.DataFrame({'Similarity_outliers': similarity_max}, index=df.index)
+    similarity_score = pd.DataFrame({'Similarity_nonoutliers': similarity_max}, index=df.index)
 
 
-    print(' Task 3: Outlier calculation completed')
+    print(' Task 3: AD calculation completed')
 
 
     fp = {}
@@ -205,7 +205,7 @@ def execute_algorithm(smile,name):
     fp_pf = pd.concat([df_predict_mlp,df_predict_svr,df_predict_xgb], axis=1)
 
     #import model
-    Model = load('models/stack_Stack.joblib')
+    Model = load('models/StackMLP-SVR-XGB.joblib')
     #predict class
     res = pd.DataFrame(Model.predict(fp_pf), columns=['pIC50'], index=fp_pf.index)
     res = pd.concat([res, similarity_score], axis=1)
@@ -223,8 +223,8 @@ def execute_algorithm(smile,name):
     print('Dr. Tarapong Srisongkram and Nur Fadhilah Syahid')
     print('   ')
 
-    result = res.to_json(orient="index")
+    result = res.to_json(orient="records")
 
     return result
 
-#execute_algorithm("CC(C)N1C=C(C(=N1)C2=C(C(=CC(=C2)Cl)NS(=O)(=O)C)F)C3=NC(=NC=C3)NCC(C)NC(=O)OC","encorafenib")
+execute_algorithm("CC(C)N1C=C(C(=N1)C2=C(C(=CC(=C2)Cl)NS(=O)(=O)C)F)C3=NC(=NC=C3)NCC(C)NC(=O)OC","encorafenib")
