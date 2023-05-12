@@ -35,6 +35,7 @@ async def StackBRAFModel(prediction: StackBRAFPredictor):
 async def StackBRAFResult(process_id: str):
     result = stackbraf_model.AsyncResult(process_id)
     if (result.successful()):
-        return {"result": result.get(timeout=1)}
+        return {"status": "complete",
+                "result": result.get(timeout=1)}
     else:
-        return {"result": "process not complete"}
+        return {"status": "processing"}
