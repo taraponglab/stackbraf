@@ -10,7 +10,7 @@ from rdkit.Chem import AllChem
 from rdkit import Chem
 from glob import glob
 import os
-import zipfile
+# import zipfile
 
 def execute_algorithm(smile,name):
     print('   ')
@@ -136,8 +136,8 @@ def execute_algorithm(smile,name):
     print(' Task 4: XGB calculation completed')
 
 
-    with zipfile.ZipFile("models/models-fp/SVR_reg_KlekotaRoth.zip","r") as zip_ref:
-        zip_ref.extractall("models/models-fp/")
+    # with zipfile.ZipFile("models/models-fp/SVR_reg_KlekotaRoth.zip","r") as zip_ref:
+    #     zip_ref.extractall("models/models-fp/")
 
     #prediction
     Model = {}

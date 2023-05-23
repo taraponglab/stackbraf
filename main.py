@@ -2,6 +2,7 @@ from fastapi import FastAPI
 from pydantic import BaseModel
 from fastapi.middleware.cors import CORSMiddleware
 from tasks import stackbraf_model
+from fastapi.staticfiles import StaticFiles
 
 class StackBRAFPredictor(BaseModel):
     name: str
@@ -16,15 +17,14 @@ origins = [
 
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=origins,
-    allow_credentials=True,
+    allow_origins=["*"],
     allow_methods=["*"],
     allow_headers=["*"],
 )
 
-@app.get("/")
-async def root():
-    return {"message": "StackBRAF Model"}
+# @app.get("/")
+# async def root():
+#     return {"message": "StackBRAF Model"}
 
 @app.post("/stackbraf/")
 async def StackBRAFModel(prediction: StackBRAFPredictor):
@@ -39,3 +39,5 @@ async def StackBRAFResult(process_id: str):
                 "result": result.get(timeout=1)}
     else:
         return {"status": "processing"}
+
+app.mount('/', StaticFiles(directory="front/public", html=True), name="static")
