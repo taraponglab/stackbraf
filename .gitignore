@@ -129,5 +129,8 @@ dmypy.json
 .pyre/
 
 front/
-models/
 stackbraf-prediction/
+
+# models/
+models/models-fp/SVR_reg_KlekotaRoth.joblib
+models/models-fp/SVR_reg_KlekotaRothCount.joblib
