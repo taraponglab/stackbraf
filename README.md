@@ -1,6 +1,6 @@
 # StackBRAF: a large-scale stacking ensemble learning for BRAF affinity prediction
 #### This software can be used for BRAF V600E protein affinity prediction
-#### You can use this model in Web Application : https://qsarlabs.com/#model
+#### You can use this model in Web Application : https://qsarlabs.com/#stackbraf
 * Author: Nur Fadhilah Syahid, Natthida Weerapreeyakul, and Tarapong Srisongkram*
 * Corresponding author: Tarapong Srisongkram (tarasri@kku.ac.th)
 * Division of Pharmaceutical Chemistry, Faculty of Pharmaceutical Sciences, Khon Kaen University, Khon Kaen, 40002, Thailand
