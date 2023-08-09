@@ -13,11 +13,12 @@ import os
 # import zipfile
 
 def execute_algorithm(smile,name):
+    base_directory = os.path.dirname(os.path.abspath(__file__))
     print('   ')
     print('Welcome to StackBRAF model, you can predict the BRAF inhibitory activity of your chemical compound based on the SMILE string')
     print('   ')
 
-    xml_files = glob("*.xml")
+    xml_files = glob(base_directory + "/" + "*.xml")
     xml_files.sort()
     FP_list = [
     'AtomPairs2DCount',
@@ -37,16 +38,18 @@ def execute_algorithm(smile,name):
     df = {name : smile}
     df = pd.DataFrame.from_dict(df, orient='index', columns=['Smile'])
     df.index.name='Name'
-    df.to_csv('stackbraf-prediction/smiles/smile.smi', sep='\t', index=False, header=False)
+    smile_path = os.path.join(base_directory, 'stackbraf-prediction/smiles/smile.smi')
+    df.to_csv(smile_path, sep='\t', index=False, header=False)
 
     print(' Task 1: SMILE loading completed')
 
+    target_path = os.path.join(base_directory, 'stackbraf-prediction/fingerprints/')
     for i in FP_list:
         fingerprint = i
 
-        fingerprint_output_file = 'stackbraf-prediction/fingerprints/'+''.join([fingerprint,'_BRAF.csv'])
+        fingerprint_output_file = target_path + ''.join([fingerprint,'_BRAF.csv'])
         fingerprint_descriptortypes = fp[fingerprint]
-        padeldescriptor(mol_dir='stackbraf-prediction/smiles/smile.smi',
+        padeldescriptor(mol_dir=smile_path,
                         d_file=fingerprint_output_file,
                         descriptortypes= fingerprint_descriptortypes,
                         retainorder=True, 
@@ -60,7 +63,8 @@ def execute_algorithm(smile,name):
     print(' Task 2: Fingerprint calculation completed')
 
     #individual compounds
-    nonoutlier = pd.read_csv('ad-analysis/nonoutlier.csv',index_col='LigandID')
+    target_path = os.path.join(base_directory, 'ad-analysis/nonoutlier.csv')
+    nonoutlier = pd.read_csv(target_path,index_col='LigandID')
     outlier_smile =list(nonoutlier['name'])
     similarity = []
     similarity_max = []
@@ -77,13 +81,14 @@ def execute_algorithm(smile,name):
 
     print(' Task 3: AD calculation completed')
 
+    target_path = os.path.join(base_directory, 'stackbraf-prediction/fingerprints/')
 
     fp = {}
     for i in FP_list:
-        fp[i] = pd.read_csv('stackbraf-prediction/fingerprints/'+''.join([i,'_BRAF.csv'])).set_index(df.index)
+        fp[i] = pd.read_csv(target_path + ''.join([i,'_BRAF.csv'])).set_index(df.index)
         fp[i] = fp[i].drop('Name', axis=1)
-        fp[i].to_csv('stackbraf-prediction/fingerprints/fp_'+''.join([i,'.csv']))
-    fp_load = [file for file in sorted(glob(os.path.join('stackbraf-prediction/fingerprints/', 'fp_*.csv')))]
+        fp[i].to_csv(target_path + '/fp_'+''.join([i,'.csv']))
+    fp_load = [file for file in sorted(glob(os.path.join(target_path, 'fp_*.csv')))]
     #list
     fp_lists = [
     'AtomPairs2D',
@@ -108,8 +113,10 @@ def execute_algorithm(smile,name):
     y_fda_predict = {}
     name = 'XGB'
 
+    target_path = os.path.join(base_directory, 'models/models-fp/')
+
     for i in fp_lists:
-        Model[i] = load('models/models-fp/'+name+'_reg_'+i+'.joblib')
+        Model[i] = load(target_path + name + '_reg_' + i + '.joblib')
         y_fda_predict[i] = Model[i].predict(fp_smile[i])
 
     list
@@ -145,7 +152,7 @@ def execute_algorithm(smile,name):
     name = 'SVR'
 
     for i in fp_lists:
-        Model[i] = load('models/models-fp/'+name+'_reg_'+i+'.joblib')
+        Model[i] = load(target_path + name + '_reg_' + i + '.joblib')
         y_fda_predict[i] = Model[i].predict(fp_smile[i])
 
     list
@@ -176,7 +183,7 @@ def execute_algorithm(smile,name):
     name = 'MLP'
 
     for i in fp_lists:
-        Model[i] = load('models/models-fp/'+name+'_reg_'+i+'.joblib')
+        Model[i] = load(target_path + name + '_reg_' + i + '.joblib')
         y_fda_predict[i] = Model[i].predict(fp_smile[i])
 
     list
@@ -204,8 +211,9 @@ def execute_algorithm(smile,name):
 
     fp_pf = pd.concat([df_predict_mlp,df_predict_svr,df_predict_xgb], axis=1)
 
+    target_path = os.path.join(base_directory, 'models/StackMLP-SVR-XGB.joblib')
     #import model
-    Model = load('models/StackMLP-SVR-XGB.joblib')
+    Model = load(target_path)
     #predict class
     res = pd.DataFrame(Model.predict(fp_pf), columns=['pIC50'], index=fp_pf.index)
     res = pd.concat([res, similarity_score], axis=1)
